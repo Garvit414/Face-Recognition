@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Real Time Multiple Cameras Face Recognition System 
 This project aims to build a real-time face recognition system that can capture video streams from multiple cameras using RTSP protocol, analyze the video frames to detect faces, create bounding boxes around those faces and labeling thoses boxes with the person names.
 
