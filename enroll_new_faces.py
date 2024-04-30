@@ -1,10 +1,10 @@
+import cv2
+import os
+import time
 import paddlehub as hub
 import sys
 sys.path.append('E:\FR_Paddle\insight-face-paddle')
 import insightface_paddle as face
-import cv2
-import os
-import time
 
 # Use the default webcam (index 0)
 camera_url = 0
@@ -17,7 +17,6 @@ args.label = "Dataset/labels.txt"
 
 face_detector = hub.Module(name="pyramidbox_lite_mobile")
 predictor = face.InsightFace(args)
-
 
 def draw_bounding_boxes(image, faces):
     # Draw bounding boxes on the image
@@ -35,17 +34,16 @@ def draw_bounding_boxes(image, faces):
     return image
   
 def crop_and_save_face(img, filepath, box_list):
-  
-  for box in box_list:
-    xmin = int(box['left'])
-    ymin = int(box['top'])
-    xmax = int(box['right'])
-    ymax = int(box['bottom'])
-    face_img = img[ymin:ymax, xmin:xmax, :]
-    cv2.imwrite(filepath, face_img)
+    for box in box_list:
+        xmin = int(box['left'])
+        ymin = int(box['top'])
+        xmax = int(box['right'])
+        ymax = int(box['bottom'])
+        face_img = img[ymin:ymax, xmin:xmax, :]
+        cv2.imwrite(filepath, face_img)
     
 def write_to_file(filepath, person_name, filename="Dataset/labels.txt"):
-    modified_filepath = "./" + os.path.join(person_name, os.path.basename(filepath))
+    modified_filepath = os.path.join(person_name, os.path.basename(filepath))
     with open(filename, 'a') as f:
         f.write("{}\t{}\n".format(modified_filepath, person_name))
         
@@ -67,7 +65,6 @@ def capture_face_images(camera_url, person_name, output_dir):
     frame_count = 0
 
     while time.time() < end_time:
-        
         # Capture frame-by-frame from the webcam
         ret, frame = cap.read()
         frame_count += 1
@@ -83,13 +80,14 @@ def capture_face_images(camera_url, person_name, output_dir):
             crop_and_save_face(frame, filepath, box_list)
             write_to_file(filepath, person_name)
             cnt += 1
-            
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-        
-if __name__ == '__main__':
     
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == '__main__':
     person_name, output_dir = enter_person_name()
     capture_face_images(camera_url, person_name, output_dir)
     predictor.build_index()
